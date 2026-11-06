@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+
 include "config.php";
 
 $message = "";
@@ -12,7 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $sql = "SELECT * FROM users WHERE username = ?";
     $stmt = $conn->prepare($sql);
+
     $stmt->bind_param("s", $username);
+
     $stmt->execute();
 
     $result = $stmt->get_result();
@@ -28,19 +31,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["role"] = $user["role"];
 
             if ($user["role"] == "librarian") {
+
                 header("Location: librarian/dashboard.php");
+
             } else {
+
                 header("Location: student/dashboard.php");
+
             }
 
             exit();
 
         } else {
-            $message = "Wrong password.";
+
+            $message = "Incorrect password.";
+
         }
 
     } else {
+
         $message = "Username not found.";
+
     }
 }
 
@@ -50,32 +61,82 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 
 <head>
-    <title>Library System</title>
+
+    <title>Library Management System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
 
-<h1>Library Management System</h1>
+<div class="login-page">
 
-<form method="POST">
+    <div class="login-container">
 
-    <label>Username</label>
-    <br>
-    <input type="text" name="username" required>
+        <div class="logo">
 
-    <br><br>
+            <div class="logo-icon">📚</div>
 
-    <label>Password</label>
-    <br>
-    <input type="password" name="password" required>
+            <h1>School Library</h1>
 
-    <br><br>
+            <p>Library Management System</p>
 
-    <button type="submit">Login</button>
+        </div>
 
-</form>
 
-<p><?php echo $message; ?></p>
+        <form method="POST">
+
+            <div class="form-group">
+
+                <label>Username</label>
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <?php if ($message != ""): ?>
+
+            <p class="login-error">
+                <?php echo htmlspecialchars($message); ?>
+            </p>
+
+        <?php endif; ?>
+
+
+    </div>
+
+</div>
 
 </body>
 
